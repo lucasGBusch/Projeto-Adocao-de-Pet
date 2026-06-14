@@ -5,20 +5,12 @@ import model.DoacaoFinanceira;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class ViewDoacaoFinanceira{
+public class ViewDoacaoFinanceira {
 
-    private DoacaoFinanceiraController controller;
-    private Scanner entrada;
-
-    public ViewDoacaoFinanceira(DoacaoFinanceiraController controller){
-        this.controller = controller;
-        this.entrada = new Scanner(System.in);
-    }
-
-    public void exibirMenu(){
+    public static void menu(Scanner entrada, DoacaoFinanceiraController controller) {
         int opcao = -1;
 
-        while(opcao != 0){
+        while (opcao != 0) {
             System.out.println("\n--- GERENCIAMENTO DE DOAÇÕES FINANCEIRAS ---");
             System.out.println("1 - Cadastrar Doação");
             System.out.println("2 - Listar Doações");
@@ -33,19 +25,19 @@ public class ViewDoacaoFinanceira{
 
             switch (opcao) {
                 case 1:
-                    menuCadastrar();
+                    menuCadastrar(entrada, controller);
                     break;
                 case 2:
-                    menuListar();
+                    menuListar(controller);
                     break;
                 case 3:
-                    menuAtualizar();
+                    menuAtualizar(entrada, controller);
                     break;
                 case 4:
-                    menuDeletar();
+                    menuDeletar(entrada, controller);
                     break;
                 case 5:
-                    menuConfirmarRecebimento();
+                    menuConfirmarRecebimento(entrada, controller);
                     break;
                 case 0:
                     System.out.println("Voltando...");
@@ -56,18 +48,18 @@ public class ViewDoacaoFinanceira{
         }
     }
 
-    private void menuCadastrar(){
+    private static void menuCadastrar(Scanner entrada, DoacaoFinanceiraController controller) {
         System.out.println("\n--- CADASTRAR NOVA DOAÇÃO ---");
 
         System.out.print("Nome do Doador: ");
         String nome = entrada.nextLine();
 
         String cpf = "";
-        while (cpf.length() != 11){
-            System.out.print("Novo CPF do Doador (apenas 11 números): ");
+        while (cpf.length() != 11) {
+            System.out.print("CPF do Doador (apenas 11 números): ");
             cpf = entrada.nextLine();
 
-            if (cpf.length() != 11){
+            if (cpf.length() != 11) {
                 System.out.println("Erro: O CPF deve conter exatamente 11 dígitos. Tente novamente.");
             }
         }
@@ -77,35 +69,31 @@ public class ViewDoacaoFinanceira{
         entrada.nextLine();
 
         DoacaoFinanceira novaDoacao = new DoacaoFinanceira(false, valor, nome, cpf);
-
         controller.cadastrar(novaDoacao);
 
         System.out.println("Doação registrada com sucesso!");
     }
 
-    private void menuListar(){
+    private static void menuListar(DoacaoFinanceiraController controller) {
         System.out.println("\n--- LISTA DE DOAÇÕES REGISTRADAS ---");
 
         ArrayList<DoacaoFinanceira> lista = controller.listar();
 
-        if (lista.isEmpty()){
+        if (lista.isEmpty()) {
             System.out.println("Nenhuma doação cadastrada até o momento.");
             return;
         }
 
-        for (int i = 0; i < lista.size(); i++){
+        for (int i = 0; i < lista.size(); i++) {
             DoacaoFinanceira d = lista.get(i);
-            if (d.isValorRecebido()) {
-                System.out.println("[" + i + "] Doador: " + d.getNome() + " | CPF: " + d.getCPF() + " | Valor: R$ " + d.getDoacao() + " | Status: Confirmado");
-            }else{
-                System.out.println("[" + i + "] Doador: " + d.getNome() + " | CPF: " + d.getCPF() + " | Valor: R$ " + d.getDoacao() + " | Status: Pendente");
-            }
+            String status = d.isValorRecebido() ? "Confirmado" : "Pendente";
+            System.out.println("[" + i + "] Doador: " + d.getNome() + " | CPF: " + d.getCPF() + " | Valor: R$ " + d.getDoacao() + " | Status: " + status);
         }
     }
 
-    private void menuAtualizar(){
+    private static void menuAtualizar(Scanner entrada, DoacaoFinanceiraController controller) {
         System.out.println("\n--- ATUALIZAR DOAÇÃO ---");
-        menuListar();
+        menuListar(controller);
 
         ArrayList<DoacaoFinanceira> lista = controller.listar();
         if (lista.isEmpty()) return;
@@ -118,11 +106,11 @@ public class ViewDoacaoFinanceira{
         String nome = entrada.nextLine();
 
         String cpf = "";
-        while (cpf.length() != 11){
+        while (cpf.length() != 11) {
             System.out.print("Novo CPF do Doador (apenas 11 números): ");
             cpf = entrada.nextLine();
 
-            if (cpf.length() != 11){
+            if (cpf.length() != 11) {
                 System.out.println("Erro: O CPF deve conter exatamente 11 dígitos. Tente novamente.");
             }
         }
@@ -136,16 +124,16 @@ public class ViewDoacaoFinanceira{
 
         DoacaoFinanceira doacaoAtualizada = new DoacaoFinanceira(recebido, valor, nome, cpf);
 
-        if(controller.atualizar(indice, doacaoAtualizada)){
+        if (controller.atualizar(indice, doacaoAtualizada)) {
             System.out.println("Doação atualizada com sucesso!");
-        }else{
+        } else {
             System.out.println("Erro: Índice inválido!");
         }
     }
 
-    private void menuDeletar(){
+    private static void menuDeletar(Scanner entrada, DoacaoFinanceiraController controller) {
         System.out.println("\n--- DELETAR DOAÇÃO ---");
-        menuListar();
+        menuListar(controller);
 
         ArrayList<DoacaoFinanceira> lista = controller.listar();
         if (lista.isEmpty()) return;
@@ -154,29 +142,28 @@ public class ViewDoacaoFinanceira{
         int indice = entrada.nextInt();
         entrada.nextLine();
 
-        if (controller.deletar(indice)){
+        if (controller.deletar(indice)) {
             System.out.println("Doação removida com sucesso!");
-        }else{
+        } else {
             System.out.println("Erro: Índice inválido!");
         }
     }
 
-    private void menuConfirmarRecebimento(){
+    private static void menuConfirmarRecebimento(Scanner entrada, DoacaoFinanceiraController controller) {
         System.out.println("\n--- CONFIRMAR RECEBIMENTO ---");
-        menuListar();
+        menuListar(controller);
 
         ArrayList<DoacaoFinanceira> lista = controller.listar();
         if (lista.isEmpty()) return;
 
-        System.out.print("\nDigite o índice da doação que deseja dar baixa (Confirmar): ");
+        System.out.print("\nDigite o índice da doação que deseja confirmar: ");
         int indice = entrada.nextInt();
-        entrada.nextLine(); // Limpa buffer
+        entrada.nextLine();
 
-        if (controller.confirmarRecebimento(indice)){
+        if (controller.confirmarRecebimento(indice)) {
             System.out.println("Status atualizado para >> Confirmado << com sucesso!");
-        }else{
+        } else {
             System.out.println("Erro: Índice inválido!");
         }
     }
-
 }

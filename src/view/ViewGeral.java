@@ -55,7 +55,7 @@ public class ViewGeral {
             } else if (opcao == 7) {
                 ViewConsultaVacina.menu(scanner, consultaVacinaController, petController);
             } else if (opcao == 8) {
-                ViewAdocao.menu(scanner, adocaoController, petController, clienteController);
+                ViewAdocao.menu(scanner, adocaoController, petController, adotanteController);
             } else if (opcao == 9) {
                 ViewDoacaoFinanceira.menu(scanner, doacaoFinanceiraController);
             }
